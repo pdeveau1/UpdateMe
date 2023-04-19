@@ -11,6 +11,16 @@ import httpx
 import asyncio
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from pytz import timezone
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+API_KEY_WEATHER = os.getenv("API_KEY_WEATHER")
+API_KEY_STOCKS = os.getenv("API_KEY_STOCKS")
+API_KEY_NEWS = os.getenv("API_KEY_NEWS")
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
 class User(BaseModel):
     id: str
@@ -75,7 +85,6 @@ def create_access_token(data: dict, expires_delta: Optional[datetime.timedelta] 
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-API_KEY_WEATHER = "f6dd306c6f52a0080725d1bc7272222c"
 async def get_weather(zip_code: str):
     url = f"http://api.openweathermap.org/data/2.5/weather?zip={zip_code}&appid={API_KEY_WEATHER}&units=imperial"
 
@@ -96,7 +105,7 @@ async def get_weather(zip_code: str):
         "day_low": day_low,
     }
 
-API_KEY_STOCKS = "U4LE3AUN0DEJUK1E"
+
 async def get_stock_price(symbol: str):
     url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={API_KEY_STOCKS}"
 
@@ -111,7 +120,7 @@ async def get_stock_price(symbol: str):
 
     return {"symbol": symbol, "price": stock_price}
 
-API_KEY_NEWS = "493d7f062fb046679a635ec147fca951 "
+
 async def get_top_news(category: str):
     url = f"https://newsapi.org/v2/top-headlines?category={category}&apiKey={API_KEY_NEWS}&pageSize=3&language=en"
 
@@ -135,7 +144,6 @@ async def get_top_news(category: str):
 
     return top_news
 
-SENDGRID_API_KEY = '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'
 async def send_notification(user: UserWithNotificationPreferences):
     content = ""
 
@@ -243,11 +251,27 @@ async def update_preferences(email: str, preferences: NotificationPreferences, t
 
     return {"status": "success", "message": "Notification preferences updated"}
 
-@app.get("/send-notifications", status_code=status.HTTP_200_OK)
-async def send_notifications():
-    await send_notifications_to_users()
-    return {"status": "success", "message": "Notifications sent"}
+async def send_notifications_at_scheduled_time():
+    current_time = datetime.datetime.now(timezone('UTC'))
+    time_of_day = current_time.strftime('%H:%M')
 
+    users = users_collection.find({"notification_preferences.time_of_day": time_of_day})
+
+    for user_data in users:
+        user = UserWithNotificationPreferences.parse_obj(user_data)
+        await send_notification(user)
+
+
+async def send_notifications():
+    users = users_collection.find({})
+
+    for user_data in users:
+        user = UserWithNotificationPreferences.parse_obj(user_data)
+        await send_notification(user)
+
+scheduler = AsyncIOScheduler()
+scheduler.add_job(send_notifications_at_scheduled_time, 'interval', minutes=1)
+scheduler.start()
 
 if __name__ == "__main__":
     import uvicorn
