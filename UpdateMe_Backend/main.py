@@ -251,6 +251,12 @@ async def update_preferences(email: str, preferences: NotificationPreferences, t
 
     return {"status": "success", "message": "Notification preferences updated"}
 
+@app.get("/send-notifications", status_code=status.HTTP_200_OK)
+async def send_notifications_manual():
+    await send_notifications_to_users()
+    return {"status": "success", "message": "Notifications sent"}
+
+
 async def send_notifications_at_scheduled_time():
     current_time = datetime.datetime.now(timezone('UTC'))
     time_of_day = current_time.strftime('%H:%M')
