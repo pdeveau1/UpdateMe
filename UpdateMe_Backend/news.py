@@ -2,8 +2,6 @@ import httpx
 import asyncio
 
 API_KEY_NEWS = "493d7f062fb046679a635ec147fca951 "
-
-
 async def get_top_news(category: str):
     url = f"https://newsapi.org/v2/top-headlines?category={category}&apiKey={API_KEY_NEWS}&pageSize=3&language=en"
 
