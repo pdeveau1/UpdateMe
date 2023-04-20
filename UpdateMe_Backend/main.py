@@ -51,6 +51,7 @@ class NotificationPreferences(BaseModel):
     stocks: Optional[StocksPreferences]
     news: Optional[NewsPreferences]
     time_of_day: str
+    timezone: str
 
 
 class Notification(BaseModel):
@@ -178,9 +179,10 @@ async def send_notification(user: UserWithNotificationPreferences):
         'content': content
     }
 
+    loop = asyncio.get_event_loop()
     try:
         sg = SendGridAPIClient(SENDGRID_API_KEY)
-        response = await sg.send(message)
+        response = await loop.run_in_executor(None, sg.send, message)
         print(f"Email sent to {user.email}, status: {response.status_code}")
     except Exception as e:
         print(f"Error sending email to {user.email}: {e}")
@@ -256,16 +258,38 @@ async def send_notifications_manual():
     await send_notifications_to_users()
     return {"status": "success", "message": "Notifications sent"}
 
+@app.delete("/users/{email}", status_code=status.HTTP_200_OK)
+async def delete_user(email: str, token: str = Depends(oauth2_scheme)):
+    user = users_collection.find_one({"email": email})
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    delete_result = users_collection.delete_one({"email": email})
+
+    if delete_result.deleted_count == 0:
+        raise HTTPException(status_code=status.HTTP_304_NOT_MODIFIED, detail="User not deleted")
+
+    return {"status": "success", "message": "User deleted"}
+
+
 
 async def send_notifications_at_scheduled_time():
-    current_time = datetime.datetime.now(timezone('UTC'))
-    time_of_day = current_time.strftime('%H:%M')
-
-    users = users_collection.find({"notification_preferences.time_of_day": time_of_day})
+    users = users_collection.find({})
 
     for user_data in users:
         user = UserWithNotificationPreferences.parse_obj(user_data)
-        await send_notification(user)
+        preferences = user.notification_preferences
+
+        if not preferences:
+            continue
+
+        user_timezone = timezone(preferences.timezone)
+        current_time = datetime.datetime.now(user_timezone)
+        time_of_day = current_time.strftime('%H:%M')
+
+        if time_of_day == preferences.time_of_day:
+            await send_notification(user)
 
 
 async def send_notifications():
