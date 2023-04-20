@@ -258,6 +258,21 @@ async def send_notifications_manual():
     await send_notifications_to_users()
     return {"status": "success", "message": "Notifications sent"}
 
+@app.delete("/users/{email}", status_code=status.HTTP_200_OK)
+async def delete_user(email: str, token: str = Depends(oauth2_scheme)):
+    user = users_collection.find_one({"email": email})
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    delete_result = users_collection.delete_one({"email": email})
+
+    if delete_result.deleted_count == 0:
+        raise HTTPException(status_code=status.HTTP_304_NOT_MODIFIED, detail="User not deleted")
+
+    return {"status": "success", "message": "User deleted"}
+
+
 
 async def send_notifications_at_scheduled_time():
     users = users_collection.find({})
