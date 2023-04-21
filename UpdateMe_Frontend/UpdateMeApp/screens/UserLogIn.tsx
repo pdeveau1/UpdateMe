@@ -36,14 +36,12 @@ export const UserLogIn: FC<{}> = ({}): ReactElement => {
 
     return await fetch(endpoint, requestOptions)
       .then(async (response) => {
-        console.log(requestOptions);
         if (response.status == 200) {
           const data = await response.json();
-          console.log(data)
           // Navigation.navigate takes the user to the screen named after the one
           // passed as parameter
           await SecureStore.setItemAsync('userEmail', usernameValue);
-          await SecureStore.setItemAsync('userToken', data.accessToken);
+          await SecureStore.setItemAsync('userToken', data.access_token);
           navigation.navigate('Home');
           return true;
         } else {
