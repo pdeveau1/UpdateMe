@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Parse from 'parse/react-native';
 import {useNavigation} from '@react-navigation/native';
+import * as SecureStore from 'expo-secure-store';
 import Styles from '../Styles';
 
 export const UserLogIn: FC<{}> = ({}): ReactElement => {
@@ -38,8 +39,11 @@ export const UserLogIn: FC<{}> = ({}): ReactElement => {
         console.log(requestOptions);
         if (response.status == 200) {
           const data = await response.json();
+          console.log(data)
           // Navigation.navigate takes the user to the screen named after the one
           // passed as parameter
+          await SecureStore.setItemAsync('userEmail', usernameValue);
+          await SecureStore.setItemAsync('userToken', data.accessToken);
           navigation.navigate('Home');
           return true;
         } else {

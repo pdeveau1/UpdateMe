@@ -1,7 +1,8 @@
 import React, {FC, ReactElement, useEffect, useState} from 'react';
-import {Text} from 'react-native';
+import {Text, View} from 'react-native';
 import Parse from 'parse/react-native';
 import Styles from '../Styles';
+import * as SecureStore from 'expo-secure-store';
 
 export const HelloUser: FC<{}> = ({}): ReactElement => {
   // State variable that will hold username value
@@ -15,10 +16,11 @@ export const HelloUser: FC<{}> = ({}): ReactElement => {
     // function here and call it afterwards
     async function getCurrentUser() {
       // This condition ensures that username is updated only if needed
+      
       if (username === '') {
-        const currentUser = await Parse.User.currentAsync();
+        const currentUser = await SecureStore.getItemAsync('userEmail');
         if (currentUser !== null) {
-          setUsername(currentUser.getUsername());
+          setUsername(currentUser);
         }
       }
     }

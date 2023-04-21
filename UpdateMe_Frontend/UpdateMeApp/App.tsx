@@ -9,6 +9,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {UserRegistration} from './screens/UserRegistration';
 import {UserLogIn} from './screens/UserLogIn';
+import {HelloUser} from './screens/HelloUser';
 import Styles from './Styles';
 
 // Your Parse initialization configuration goes here
@@ -85,6 +86,7 @@ function HomeScreen() {
             {' Home'}
           </Text>
         </View>
+        <HelloUser />
       </SafeAreaView>
     </>
   );

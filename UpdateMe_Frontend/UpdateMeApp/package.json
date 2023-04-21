@@ -13,6 +13,8 @@
     "@react-native-async-storage/async-storage": "^1.18.1",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/stack": "^6.3.16",
+    "expo": "^48.0.11",
+    "expo-secure-store": "~12.1.1",
     "parse": "^4.0.1",
     "react": "18.2.0",
     "react-native": "^0.71.7",
@@ -39,5 +41,12 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "expo": {
+    "autolinking": {
+      "exclude": [
+        "expo-keep-awake"
+      ]
+    }
   }
 }
