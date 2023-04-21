@@ -16,6 +16,7 @@
  import {UserLogIn} from './screens/UserLogIn';
  import {UserLogOut} from './screens/UserLogOut';
  import {HelloUser} from './screens/HelloUser';
+ import { SetPreferences } from './screens/SetPreferences';
  import Styles from './Styles';
  
  // Your Parse initialization configuration goes here
@@ -73,6 +74,29 @@
      </>
    );
  }
+
+ function SetPreferencesScreen() {
+  return (
+    <>
+      <StatusBar />
+      <SafeAreaView style={Styles.login_container}>
+        <View style={Styles.login_header}>
+          <Image
+            style={Styles.login_header_logo}
+            source={require('./assets/logo.png')}
+          />
+          <Text style={Styles.login_header_text}>
+            <Text style={Styles.login_header_text_bold}>
+              {'React Native on UpdateMe - '}
+            </Text>
+            {' Set Preferences'}
+          </Text>
+        </View>
+        <SetPreferences />
+      </SafeAreaView>
+    </>
+  );
+}
  
  function HomeScreen() {
    return (
@@ -108,7 +132,9 @@
        <Stack.Navigator>
          <Stack.Screen name="Login" component={UserLogInScreen} />
          <Stack.Screen name="Sign Up" component={UserRegistrationScreen} />
+         <Stack.Screen name="Set Preferences" component={SetPreferencesScreen} />
          <Stack.Screen name="Home" component={HomeScreen} />
+         
        </Stack.Navigator>
      </NavigationContainer>
    );

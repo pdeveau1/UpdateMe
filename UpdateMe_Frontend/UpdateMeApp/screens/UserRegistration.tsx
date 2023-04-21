@@ -1,8 +1,12 @@
 import React, { FC, ReactElement, useState } from "react";
 import { Alert, Button, StyleSheet, TextInput } from "react-native";
 import Parse from "parse/react-native";
+import {useNavigation} from '@react-navigation/native';
+import * as SecureStore from 'expo-secure-store';
 
 export const UserRegistration: FC<{}> = ({}): ReactElement => {
+  const navigation = useNavigation();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -38,6 +42,7 @@ export const UserRegistration: FC<{}> = ({}): ReactElement => {
         "Success!",
         `User ${emailValue} was successfully created!`
       );
+      await doUserLogIn();
       return true;
     } else {
       Alert.alert("Error!", "User registration failed");
@@ -45,6 +50,44 @@ export const UserRegistration: FC<{}> = ({}): ReactElement => {
     }
   };
   
+  const doUserLogIn = async function (): Promise<boolean> {
+    // Note that this values come from state variables that we've declared before
+    const usernameValue: string = email;
+    const passwordValue: string = password;
+    const endpoint: string = 'http://127.0.0.1:8000/login';
+  
+    const formData = new URLSearchParams();
+    formData.append('username', usernameValue);
+    formData.append('password', passwordValue);
+  
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString(),
+      };
+
+    return await fetch(endpoint, requestOptions)
+      .then(async (response) => {
+        if (response.status == 200) {
+          const data = await response.json();
+          // Navigation.navigate takes the user to the screen named after the one
+          // passed as parameter
+          await SecureStore.setItemAsync('userEmail', usernameValue);
+          await SecureStore.setItemAsync('userToken', data.access_token);
+          navigation.navigate('Set Preferences');
+          return true;
+        } else {
+          const error = await response.json();
+          Alert.alert('Error!', error.message);
+          return false;
+        }
+      })
+      .catch((error) => {
+        // Error can be caused by wrong parameters or lack of Internet connection
+        Alert.alert('Error!', error.message);
+        return false;
+      });
+  };
 
   return (
     <>
