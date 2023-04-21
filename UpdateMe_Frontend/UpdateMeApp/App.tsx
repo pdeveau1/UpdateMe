@@ -40,7 +40,7 @@
            />
            <Text style={Styles.login_header_text}>
              <Text style={Styles.login_header_text_bold}>
-               {'React Native on Back4App - '}
+               {'React Native on UpdateMe - '}
              </Text>
              {' User registration'}
            </Text>
@@ -63,7 +63,7 @@
            />
            <Text style={Styles.login_header_text}>
              <Text style={Styles.login_header_text_bold}>
-               {'React Native on Back4App - '}
+               {'React Native on UpdateMe - '}
              </Text>
              {' User login'}
            </Text>
@@ -86,7 +86,7 @@
            />
            <Text style={Styles.login_header_text}>
              <Text style={Styles.login_header_text_bold}>
-               {'React Native on Back4App - '}
+               {'React Native on UpdateMe - '}
              </Text>
              {' Home'}
            </Text>
