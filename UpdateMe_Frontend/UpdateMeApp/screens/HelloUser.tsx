@@ -87,7 +87,10 @@ export const HelloUser: FC<{}> = ({}): ReactElement => {
     <View style={Styles.login_wrapper}>
       <View style={Styles.form}>
         {username !== '' && <Text>{`Hello ${username}!`}</Text>}
-        {Object.keys(preferences).length !== 0 && (<Text>{`Preferences: ${JSON.stringify(preferences)}!`}</Text>)}
+        {username !== '' && <Text>{`Your notification preferences:`}</Text>}
+        {preferences.news.category !== "" && <Text>{`News: ${preferences.news.category}`}</Text>}
+        {preferences.stocks.stock_symbols[0] !== "" && <Text>{`Stocks: ${preferences.stocks.stock_symbols}`}</Text>}
+        {preferences.weather.location_zipcode !== "" && <Text>{`Weather: ${preferences.weather.location_zipcode}`}</Text>}
       </View>
     </View>
   );
