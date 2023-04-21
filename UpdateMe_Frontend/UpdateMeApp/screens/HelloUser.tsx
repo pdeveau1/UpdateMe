@@ -91,6 +91,7 @@ export const HelloUser: FC<{}> = ({}): ReactElement => {
         {preferences.news.category !== "" && <Text>{`News: ${preferences.news.category}`}</Text>}
         {preferences.stocks.stock_symbols[0] !== "" && <Text>{`Stocks: ${preferences.stocks.stock_symbols}`}</Text>}
         {preferences.weather.location_zipcode !== "" && <Text>{`Weather: ${preferences.weather.location_zipcode}`}</Text>}
+        {preferences.time_of_day !== "" && preferences.timezone != "" && <Text>{`You will be notified at ${preferences.time_of_day} ${preferences.timezone}`}</Text>}
       </View>
     </View>
   );
