@@ -4,27 +4,13 @@ import Parse from 'parse/react-native';
 import Styles from '../Styles';
 import {useNavigation} from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
+import defaultPreferences from '../data/preferences';
 
 export const HelloUser: FC<{}> = ({}): ReactElement => {
   const navigation = useNavigation();
   // State variable that will hold username value
   const [username, setUsername] = useState('');
-  const [preferences, setPreferences] = useState({
-    news: {
-      category: "",
-      notify: false
-    },
-    stocks: {
-      notify: false,
-      stock_symbols: [""]
-    },
-    time_of_day: "",
-    timezone: "",
-    weather: {
-      location_zipcode: "",
-      notify: false
-    }
-  });
+  const [preferences, setPreferences] = useState(defaultPreferences);
 
   // useEffect is called after the component is initially rendered and
   // after every other render
