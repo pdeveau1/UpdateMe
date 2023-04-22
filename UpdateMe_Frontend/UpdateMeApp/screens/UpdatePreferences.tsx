@@ -4,6 +4,7 @@ import Parse from "parse/react-native";
 import {useNavigation} from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import Styles from '../Styles';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export const UpdatePreferences: FC<{}> = ({}): ReactElement => {
   const navigation = useNavigation();
@@ -11,11 +12,13 @@ export const UpdatePreferences: FC<{}> = ({}): ReactElement => {
   const [zipCode, setZipCode] = useState("");
   const [stockSymbol, setStockSymbol] = useState("");
   const [category, setCategory] = useState("");
+  const [timeOfDay, setTimeOfDay] = useState(new Date());
 
   const doUpdateRegistration = async function (): Promise<boolean> {
     const zipCodeValue: string = zipCode;
     const stockSymbolValue: string = stockSymbol;
     const categoryValue: string = category;
+    const timeOfDayValue: string = timeOfDay.toString();
     
     const response = await fetch(`http://127.0.0.1:8000/users/${await SecureStore.getItemAsync('userEmail')}/preferences`, {
       method: 'PATCH',
@@ -36,7 +39,7 @@ export const UpdatePreferences: FC<{}> = ({}): ReactElement => {
             notify: true,
             category: categoryValue
           },
-          time_of_day: "string",
+          time_of_day: timeOfDayValue,
           timezone: "string"
       })
     });
@@ -81,6 +84,11 @@ export const UpdatePreferences: FC<{}> = ({}): ReactElement => {
         value={category}
         placeholder={"News Category"}
         onChangeText={(text) => setCategory(text)}
+      />
+      <DateTimePicker 
+        mode="time" 
+        value={timeOfDay}
+        onChange={(event, selectedTime) => setTimeOfDay(selectedTime)}
       />
       <Button title={"Update Preferences"} onPress={() => doUpdateRegistration()} />
     </>
