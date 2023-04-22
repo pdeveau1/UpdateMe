@@ -1,8 +1,9 @@
 import React, { FC, ReactElement, useState } from "react";
-import { Alert, Button, StyleSheet, TextInput, Text } from "react-native";
+import { Alert, Button, StyleSheet, TextInput, Text, TouchableOpacity } from "react-native";
 import Parse from "parse/react-native";
 import {useNavigation} from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
+import Styles from '../Styles';
 
 export const SetPreferences: FC<{}> = ({}): ReactElement => {
   const navigation = useNavigation();
@@ -58,6 +59,7 @@ export const SetPreferences: FC<{}> = ({}): ReactElement => {
 
   return (
     <>
+    <>
       <Text>{"Weather"}</Text>
       <TextInput
         style={styles.input}
@@ -82,6 +84,14 @@ export const SetPreferences: FC<{}> = ({}): ReactElement => {
       />
       <Button title={"Set Preferences"} onPress={() => doSetRegistration()} />
     </>
+    <>
+    <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <Text style={Styles.login_footer_text}>
+        <Text style={Styles.login_footer_link}>{'Skip'}</Text>
+      </Text>
+    </TouchableOpacity>
+  </>
+  </>
   );
 };
 
