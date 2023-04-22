@@ -1,10 +1,12 @@
 import React, {FC, ReactElement, useEffect, useState} from 'react';
-import {Text, View, Alert} from 'react-native';
+import {Text, View, Alert, TouchableOpacity } from 'react-native';
 import Parse from 'parse/react-native';
 import Styles from '../Styles';
+import {useNavigation} from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 
 export const HelloUser: FC<{}> = ({}): ReactElement => {
+  const navigation = useNavigation();
   // State variable that will hold username value
   const [username, setUsername] = useState('');
   const [preferences, setPreferences] = useState({
@@ -40,11 +42,20 @@ export const HelloUser: FC<{}> = ({}): ReactElement => {
         if (currentUser !== null) {
           setUsername(currentUser);
         }
-        getPreferences();
       }
     }
     getCurrentUser();
   }, [username]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // Call your function here
+      getPreferences();
+    });
+
+    // Return the cleanup function
+    return unsubscribe;
+  }, [navigation]);  
 
   const getPreferences = async function (): Promise<boolean> {
     const endpoint = `http://127.0.0.1:8000/preferences/${await SecureStore.getItemAsync('userEmail')}`;
@@ -93,6 +104,13 @@ export const HelloUser: FC<{}> = ({}): ReactElement => {
         {preferences.weather.location_zipcode !== "" && <Text>{`Weather: ${preferences.weather.location_zipcode}`}</Text>}
         {preferences.time_of_day !== "" && preferences.timezone != "" && <Text>{`You will be notified at ${preferences.time_of_day} ${preferences.timezone}`}</Text>}
       </View>
+      <>
+        <TouchableOpacity onPress={() => navigation.navigate('Update Preferences')}>
+          <Text style={Styles.login_footer_text}>
+            <Text style={Styles.login_footer_link}>{'Update Preferences'}</Text>
+          </Text>
+        </TouchableOpacity>
+      </>
     </View>
   );
 };
