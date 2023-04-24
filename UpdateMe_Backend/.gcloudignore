@@ -1,11 +1,8 @@
-.env
-.env.production
 __pycache__
 *.pyc
 *.pyo
 *.pyd
 .DS_Store
+.env
 .git
 .gitignore
-.env.production
-venv
