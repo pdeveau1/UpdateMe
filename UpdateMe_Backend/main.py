@@ -15,9 +15,19 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pytz import timezone, all_timezones
 from dotenv import load_dotenv
 import os
+import sys
 from fastapi.logger import logger
+import logging
 import re
 from pydantic import ValidationError
+
+logging.basicConfig(level=logging.INFO)
+logger.handlers = []
+handler = logging.StreamHandler(sys.stdout)
+logger.addHandler(handler)
+aps_logger = logging.getLogger("apscheduler")
+aps_logger.setLevel(logging.ERROR)
+
 
 load_dotenv()
 API_KEY_WEATHER = os.getenv("API_KEY_WEATHER")
@@ -158,7 +168,7 @@ async def get_stock_price(symbol: str):
         raise ValueError("Failed to fetch stock data")
 
     data = response.json()
-    stock_price = float(data["Global Quote"]["05. price"])
+    stock_price = float(data['Global Quote']["05. price"])
 
     return {"symbol": symbol, "price": stock_price}
 
