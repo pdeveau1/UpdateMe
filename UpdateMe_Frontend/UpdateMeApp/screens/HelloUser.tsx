@@ -44,7 +44,7 @@ export const HelloUser: FC<{}> = ({}): ReactElement => {
   }, [navigation]);  
 
   const getPreferences = async function (): Promise<boolean> {
-    const endpoint = `http://127.0.0.1:8000/preferences/${await SecureStore.getItemAsync('userEmail')}`;
+    const endpoint = `https://fastapi-app-6keaqsjy5q-uk.a.run.app/preferences/${await SecureStore.getItemAsync('userEmail')}`;
 
     const requestBody = {
       email: await SecureStore.getItemAsync('userEmail')

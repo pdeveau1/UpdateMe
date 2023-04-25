@@ -22,7 +22,7 @@ export const UserLogIn: FC<{}> = ({}): ReactElement => {
     // Note that this values come from state variables that we've declared before
     const usernameValue: string = username;
     const passwordValue: string = password;
-    const endpoint: string = 'http://127.0.0.1:8000/login';
+    const endpoint: string = 'https://fastapi-app-6keaqsjy5q-uk.a.run.app/login';
   
     const formData = new URLSearchParams();
     formData.append('username', username);
@@ -36,6 +36,7 @@ export const UserLogIn: FC<{}> = ({}): ReactElement => {
 
     return await fetch(endpoint, requestOptions)
       .then(async (response) => {
+        console.log(response);
         if (response.status == 200) {
           const data = await response.json();
           // Navigation.navigate takes the user to the screen named after the one

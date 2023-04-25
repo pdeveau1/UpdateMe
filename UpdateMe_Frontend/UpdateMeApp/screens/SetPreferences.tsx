@@ -17,7 +17,7 @@ export const SetPreferences: FC<{}> = ({}): ReactElement => {
     const stockSymbolValue: string = stockSymbol;
     const categoryValue: string = category;
     
-    const response = await fetch(`http://127.0.0.1:8000/users/${await SecureStore.getItemAsync('userEmail')}/preferences`, {
+    const response = await fetch(`https://fastapi-app-6keaqsjy5q-uk.a.run.app/users/${await SecureStore.getItemAsync('userEmail')}/preferences`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json',
                   Authorization: `Bearer ${await SecureStore.getItemAsync('userToken')}`, },
@@ -36,8 +36,8 @@ export const SetPreferences: FC<{}> = ({}): ReactElement => {
             notify: true,
             category: categoryValue
           },
-          time_of_day: "string",
-          timezone: "string"
+          time_of_day: "13:00",
+          timezone: "America/New_York"
       })
     });
     

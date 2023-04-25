@@ -11,16 +11,14 @@ export const UserRegistration: FC<{}> = ({}): ReactElement => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
 
   const doUserRegistration = async function (): Promise<boolean> {
     const emailValue: string = email;
     const passwordValue: string = password;
     const firstNameValue: string = firstName;
     const lastNameValue: string = lastName;
-    const phoneNumberValue: string = phoneNumber;
     
-    const response = await fetch('http://127.0.0.1:8000/register', {
+    const response = await fetch('https://fastapi-app-6keaqsjy5q-uk.a.run.app/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -31,7 +29,7 @@ export const UserRegistration: FC<{}> = ({}): ReactElement => {
         password: passwordValue,
         first_name: firstNameValue,
         last_name: lastNameValue,
-        phone_number: phoneNumberValue
+        "notification_on": false
       })
     });
     
@@ -54,7 +52,7 @@ export const UserRegistration: FC<{}> = ({}): ReactElement => {
     // Note that this values come from state variables that we've declared before
     const usernameValue: string = email;
     const passwordValue: string = password;
-    const endpoint: string = 'http://127.0.0.1:8000/login';
+    const endpoint: string = 'https://fastapi-app-6keaqsjy5q-uk.a.run.app/login';
   
     const formData = new URLSearchParams();
     formData.append('username', usernameValue);
@@ -116,12 +114,6 @@ export const UserRegistration: FC<{}> = ({}): ReactElement => {
         value={lastName}
         placeholder={"Last Name"}
         onChangeText={(text) => setLastName(text)}
-      />
-      <TextInput
-        style={styles.input}
-        value={phoneNumber}
-        placeholder={"Phone Number"}
-        onChangeText={(text) => setPhoneNumber(text)}
       />
       <Button title={"Sign Up"} onPress={() => doUserRegistration()} />
     </>

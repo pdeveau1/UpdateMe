@@ -34,7 +34,7 @@ export const UpdatePreferences: FC<{}> = ({}): ReactElement => {
   }, [navigation]);  
   
 const getPreferences = async function (): Promise<boolean> {
-    const endpoint = `http://127.0.0.1:8000/preferences/${await SecureStore.getItemAsync('userEmail')}`;
+    const endpoint = `https://fastapi-app-6keaqsjy5q-uk.a.run.app/preferences/${await SecureStore.getItemAsync('userEmail')}`;
 
     const requestBody = {
       email: await SecureStore.getItemAsync('userEmail')
@@ -48,6 +48,7 @@ const getPreferences = async function (): Promise<boolean> {
     };
     return await fetch(endpoint, requestOptions)
       .then(async (response) => {
+        console.log(response)
         if (response.status == 200) {
           const data = await response.json();
           console.log(data);
@@ -55,6 +56,12 @@ const getPreferences = async function (): Promise<boolean> {
           setWeatherNotify(data.weather.notify);
           setStockSymbol(data.stocks.stock_symbols.join());
           setCategory(data.news.category);
+          const time = new Date();
+          time.setHours(parseInt(data.time_of_day.split(":")[0]));
+          time.setMinutes(parseInt(data.time_of_day.split(":")[1]));
+          setTimeOfDay(time)
+          timeOfDay.setHours(parseInt(data.time_of_day.split(":")[0]));
+          timeOfDay.setMinutes(parseInt(data.time_of_day.split(":")[1]));
           // Navigation.navigate takes the user to the screen named after the one
           // passed as parameter
           return true;
@@ -77,7 +84,7 @@ const getPreferences = async function (): Promise<boolean> {
     const categoryValue: string = category;
     const timeOfDayValue: string = `${timeOfDay.getHours().toString()}:${timeOfDay.getMinutes().toString()}`;
 
-    const response = await fetch(`http://127.0.0.1:8000/users/${await SecureStore.getItemAsync('userEmail')}/preferences`, {
+    const response = await fetch(`https://fastapi-app-6keaqsjy5q-uk.a.run.app/users/${await SecureStore.getItemAsync('userEmail')}/preferences`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json',
                   Authorization: `Bearer ${await SecureStore.getItemAsync('userToken')}`, },
@@ -96,7 +103,7 @@ const getPreferences = async function (): Promise<boolean> {
                       category: categoryValue
                     },
                     time_of_day: timeOfDayValue,
-                    timezone: "string"
+                    timezone: "America/New_York"
                 })
     });
     const result = await response.json();
@@ -109,7 +116,9 @@ const getPreferences = async function (): Promise<boolean> {
       navigation.navigate('Home');
       return true;
     } else {
-      Alert.alert("Error!", "User registration failed");
+      console.log(response.error)
+      const error = await response.json();
+      Alert.alert('Error!', error.message);
       return false;
     }
   };
