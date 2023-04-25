@@ -51,7 +51,8 @@ export const SetPreferences: FC<{}> = ({}): ReactElement => {
       navigation.navigate('Home');
       return true;
     } else {
-      Alert.alert("Error!", "User registration failed");
+      const error = await response.json();
+      Alert.alert('Error!', error.message);
       return false;
     }
   };
