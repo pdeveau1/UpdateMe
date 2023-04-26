@@ -48,10 +48,8 @@ const getPreferences = async function (): Promise<boolean> {
     };
     return await fetch(endpoint, requestOptions)
       .then(async (response) => {
-        console.log(response)
         if (response.status == 200) {
           const data = await response.json();
-          console.log(data);
           setZipCode(data.weather.location_zipcode);
           setWeatherNotify(data.weather.notify);
           setStockSymbol(data.stocks.stock_symbols.join());
@@ -90,23 +88,23 @@ const getPreferences = async function (): Promise<boolean> {
                   Authorization: `Bearer ${await SecureStore.getItemAsync('userToken')}`, },
                   body: JSON.stringify({
                     weather: {
-                      notify: true,
+                      notify: weatherNotify,
                       location_zipcode: zipCodeValue
                     },
                     stocks: {
-                      notify: true,
+                      notify: stocksNotify,
                       stock_symbols:
                         stockSymbolValue
                     },
                     news: {
-                      notify: true,
+                      notify: newsNotify,
                       category: categoryValue
                     },
                     time_of_day: timeOfDayValue,
                     timezone: "America/New_York"
                 })
     });
-    const result = await response.json();
+    //const result = await response.json();
     console.log(response)
     if (response.status == 200) {
       Alert.alert(
