@@ -1,21 +1,15 @@
-# UpdateMe Backend API
+# UpdateMe Frontend API
 
-This is the backend API for the UpdateMe app, which sends personalized notifications to users based on their preferences. It utilizes FastAPI and provides endpoints for user registration, login, managing notification preferences, and fetching the last sent notification. The app sends weather updates, stock prices, and top news headlines.
+This is the frontend for the UpdateMe app. This handles all the user interface for the UpdateMe app including registering an account, signing in, seeing current notification preferences, and updating current notification preferences.
 
 ## Getting Started
 
 These instructions will help you set up and run the project on your local machine for development and testing purposes.
 
-View the API Docs at: https://fastapi-app-6keaqsjy5q-uk.a.run.app/docs
-
 ### Prerequisites
 
 - Python 3.7 or higher
-- MongoDB Atlas Account and Cluster
-- SendGrid Account
-- NewAPI Account
-- AlphaVantage Account
-- OpenWeatherMap Account
+- React-native 0.17 ir higher
 
 ## Installation
 
@@ -23,57 +17,46 @@ View the API Docs at: https://fastapi-app-6keaqsjy5q-uk.a.run.app/docs
 
 ```git clone https://github.com/pdeveau1/UpdateMe.git```
 
-2. Create a virtual environment and activate it.
-
 ```
-cd UpdateMe_Backend
+cd UpdateMe_Frontend/UpdateMeApp
 python -m venv venv
-source venv/bin/activate # For Linux/MacOS
-venv\Scripts\activate # For Windows
 
 ```
 
 3. Install the required packages:
 
 ```
-pip install -r requirements.txt
+npm install
 ```
 
-4. Create a `.env` file with the following variables:
-
+4. Start the APP:
 ```
-API_KEY_WEATHER = your_openweathermap_api_key
-API_KEY_STOCKS = your_alphavantage_api_key
-API_KEY_NEWS = your_newsapi_org_api_key
-SENDGRID_API_KEY = your_sendgrid_api_key
+npx react-native start
 ```
 
-Replace the placeholders with your API keys.
+This will load the simulator
 
-5. Start the API server:
-```
-uvicorn main:app --reload
-```
+## Screens
 
+- User login
+![Image 4-26-23 at 11 58 PM](https://user-images.githubusercontent.com/67556230/235975575-e9abb158-4d84-4305-ac86-c099069ca53f.jpg)
 
-The API will be accessible at `http://127.0.0.1:8000`.
+- User Registration
+![Image 4-26-23 at 11 58 PM (1)](https://user-images.githubusercontent.com/67556230/235975730-3f368efa-c14f-414b-a4a1-d68f6670685b.jpg)
 
-## Endpoints
+- Set Preferences
+![Image 4-26-23 at 11 59 PM](https://user-images.githubusercontent.com/67556230/235975769-dd904c5a-64a6-4564-bd92-b97deb055235.jpg)
 
-- `/register` (POST): Register a new user
-- `/login` (POST): Login an existing user
-- `/preferences/{email}` (GET): Get user's notification preferences
-- `/users/{email}/notification_on` (GET): Check if user's notifications are enabled
-- `/users/{email}/preferences` (PATCH): Update user's notification preferences
-- `/users/{email}/notification_on` (PATCH): Update user's notification status (on/off)
-- `/send-notifications` (GET): Manually send notifications to users
-- `/users/{email}` (DELETE): Delete a user
-- `/users/{email}/last-notification` (GET): Get the last sent notification for a user
+- Update Preferences
+![Image 4-27-23 at 12 00 AM](https://user-images.githubusercontent.com/67556230/235975799-3c98ca9f-d675-49be-82b6-a197ce8498e6.jpg)
+
+- Home
+![Image 4-26-23 at 11 59 PM](https://user-images.githubusercontent.com/67556230/235975638-6ec11ca6-1a8b-4d36-8075-b66ffe581577.jpg)
+![Image 4-27-23 at 12 03 AM](https://user-images.githubusercontent.com/67556230/235975687-dab62e4c-ad07-444f-8b27-d2b49e877044.jpg)
+
 
 ## Usage
 
-To use the UpdateMe API, interact with the provided endpoints using your preferred API client, such as Postman, or the built-in FastAPI Swagger UI available at `http://127.0.0.1:8000/docs`.
-
-Refer to the code for the expected request and response formats for each endpoint.
+To use the UpdateMe App you can interact with the app running on the simulator
 
 
