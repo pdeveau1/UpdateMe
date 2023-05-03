@@ -285,6 +285,31 @@ async def send_notifications_to_users():
 
         await send_notification(user)
 
+async def send_confirmation_email(user: User):
+    content = f"<p>Welcome, {user.first_name}! Thank you for signing up with UpdateMe.</p><p>Start customizing your notification preferences to receive personalized updates.</p>"
+
+    message = Mail(
+        from_email='abhinoor@bu.edu',
+        to_emails=user.email,
+        subject='Welcome to UpdateMe')
+
+    message.template_id = "d-c5f3c3dfe2d34888a81d9468945d2a13"
+    message.dynamic_template_data = {
+        'user': {
+            'first_name': user.first_name
+        },
+        'content': content
+    }
+
+    loop = asyncio.get_event_loop()
+    try:
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = await loop.run_in_executor(None, sg.send, message)
+        logger.info(f"Confirmation email sent to {user.email}, status: {response.status_code}")
+
+    except Exception as e:
+        logger.info(f"Error sending confirmation email to {user.email}: {e}")
+
 
 @app.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: User):
@@ -302,6 +327,9 @@ async def register(user: User):
     result = users_collection.insert_one(user.dict())
 
     logger.info(f"User {user.email} registered with ID: {str(result.inserted_id)}")
+
+    # Send confirmation email
+    await send_confirmation_email(user)
 
     return {"user_id": str(result.inserted_id)}
 
@@ -421,6 +449,19 @@ async def get_last_notification(email: str, token: str = Depends(oauth2_scheme))
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Last notification not found")
 
     return SentNotification(**user["last_notification"])
+
+@app.post("/send-app-notification/{email}", status_code=status.HTTP_200_OK)
+async def send_app_notification(email: str, token: str = Depends(oauth2_scheme)):
+    user_data = users_collection.find_one({"email": email})
+    if not user_data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    if user_data["notification_on"] is True:
+        user = UserWithNotificationPreferences.parse_obj(user_data)
+        await send_notification(user)
+        return {"status": "success", "message": "Notification sent to the user"}
+    else:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User has global notifications turned off")
 
 
 async def send_notifications_at_scheduled_time():
