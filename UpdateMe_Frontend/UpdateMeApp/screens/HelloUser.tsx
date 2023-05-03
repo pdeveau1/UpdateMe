@@ -123,13 +123,13 @@ export const HelloUser: FC<{}> = ({}): ReactElement => {
       <ScrollView style={Styles.form}>
         {username !== '' && <Text>{`Hello ${username}!`}</Text>}
         {username !== '' && <Text>{`Your last notification:`}</Text>}
-        {preferences.weather.location_zipcode !== "" && <Text>{`Weather:`}</Text>}
-        {preferences.weather.location_zipcode !== "" && <Text>{`Current temp ${notifications.weather_data.current_temp}, High ${notifications.weather_data.day_high}, Low ${notifications.weather_data.day_low} `}</Text>}
-        {preferences.weather.location_zipcode !== "" && <Text>{`Stocks:`}</Text>}
+        {notifications.weather_data.current_temp !== 0.0 && <Text>{`Weather:`}</Text>}
+        {notifications.weather_data.current_temp !== 0.0 && <Text>{`Current temp ${notifications.weather_data.current_temp}, High ${notifications.weather_data.day_high}, Low ${notifications.weather_data.day_low} `}</Text>}
+        {notifications.stock_data[0].symbol !== "" && <Text>{`Stocks:`}</Text>}
         {notifications.stock_data.map((item, index) => (
           <Text key={index}>{`${item.symbol} ${item.price}`}</Text>
         ))}
-        {preferences.weather.location_zipcode !== "" && <Text>{`Top News:`}</Text>}
+        {notifications.news_data[0].title !== "" && <Text>{`Top News:`}</Text>}
         {notifications.news_data.map((item, index) => (
           <Text key={index}>{`${item.title} - ${item.source}`}</Text>
         ))}
