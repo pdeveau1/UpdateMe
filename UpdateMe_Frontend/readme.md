@@ -9,7 +9,7 @@ These instructions will help you set up and run the project on your local machin
 ### Prerequisites
 
 - Python 3.7 or higher
-- React-native 0.17 ir higher
+- React-native 0.17 or higher
 
 ## Installation
 
