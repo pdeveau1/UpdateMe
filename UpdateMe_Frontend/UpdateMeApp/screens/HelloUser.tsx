@@ -1,16 +1,18 @@
 import React, {FC, ReactElement, useEffect, useState} from 'react';
-import {Text, View, Alert, TouchableOpacity } from 'react-native';
+import {Text, View, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import Parse from 'parse/react-native';
 import Styles from '../Styles';
 import {useNavigation} from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import defaultPreferences from '../data/preferences';
+import defaultNotifications from '../data/notifications';
 
 export const HelloUser: FC<{}> = ({}): ReactElement => {
   const navigation = useNavigation();
   // State variable that will hold username value
   const [username, setUsername] = useState('');
   const [preferences, setPreferences] = useState(defaultPreferences);
+  const [notifications, setNotifications] = useState(defaultNotifications);
 
   // useEffect is called after the component is initially rendered and
   // after every other render
@@ -37,6 +39,7 @@ export const HelloUser: FC<{}> = ({}): ReactElement => {
     const unsubscribe = navigation.addListener('focus', () => {
       // Call your function here
       getPreferences();
+      getLastNotification();
     });
 
     // Return the cleanup function
@@ -78,18 +81,60 @@ export const HelloUser: FC<{}> = ({}): ReactElement => {
         return false;
       });
   };
+  const getLastNotification = async function (): Promise<boolean> {
+    const endpoint = `https://fastapi-app-6keaqsjy5q-uk.a.run.app/users/${await SecureStore.getItemAsync('userEmail')}/last-notification`;
+
+    const requestBody = {
+      email: await SecureStore.getItemAsync('userEmail')
+    };
+    
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json',
+                  Authorization: `Bearer ${await SecureStore.getItemAsync('userToken')}`, },
+      //body: JSON.stringify(requestBody),
+    };
+    return await fetch(endpoint, requestOptions)
+      .then(async (response) => {
+        if (response.status == 200) {
+          const data = await response.json();
+          console.log(data)
+          setNotifications(data);
+          console.log(notifications)
+          // Navigation.navigate takes the user to the screen named after the one
+          // passed as parameter
+          return true;
+        } else {
+          const error = await response.json();
+          Alert.alert('Error!', error.message);
+          return false;
+        }
+      })
+      .catch((error) => {
+        // Error can be caused by wrong parameters or lack of Internet connection
+        Alert.alert('Error!', error.message);
+        return false;
+      });
+  };
   // Note the condition operator here, so the "Hello" text is only
   // rendered if there is an username value
   return (
     <View style={Styles.login_wrapper}>
-      <View style={Styles.form}>
+      <ScrollView style={Styles.form}>
         {username !== '' && <Text>{`Hello ${username}!`}</Text>}
-        {username !== '' && <Text>{`Your notification preferences:`}</Text>}
-        {preferences.news.category !== "" && <Text>{`News: ${preferences.news.category}`}</Text>}
-        {preferences.stocks.stock_symbols[0] !== "" && <Text>{`Stocks: ${preferences.stocks.stock_symbols}`}</Text>}
-        {preferences.weather.location_zipcode !== "" && <Text>{`Weather: ${preferences.weather.location_zipcode}`}</Text>}
+        {username !== '' && <Text>{`Your last notification:`}</Text>}
+        {preferences.weather.location_zipcode !== "" && <Text>{`Weather:`}</Text>}
+        {preferences.weather.location_zipcode !== "" && <Text>{`Current temp ${notifications.weather_data.current_temp}, High ${notifications.weather_data.day_high}, Low ${notifications.weather_data.day_low} `}</Text>}
+        {preferences.weather.location_zipcode !== "" && <Text>{`Stocks:`}</Text>}
+        {notifications.stock_data.map((item, index) => (
+          <Text key={index}>{`${item.symbol} ${item.price}`}</Text>
+        ))}
+        {preferences.weather.location_zipcode !== "" && <Text>{`Top News:`}</Text>}
+        {notifications.news_data.map((item, index) => (
+          <Text key={index}>{`${item.title} - ${item.source}`}</Text>
+        ))}
         {preferences.time_of_day !== "" && preferences.timezone != "" && <Text>{`You will be notified at ${preferences.time_of_day} ${preferences.timezone}`}</Text>}
-      </View>
+      </ScrollView>
       <>
         <TouchableOpacity onPress={() => navigation.navigate('Update Preferences')}>
           <Text style={Styles.login_footer_text}>
