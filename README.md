@@ -12,7 +12,7 @@ UpdateMe is a mobile application that allows users to set up notifications for v
 
 ## Project Setup
 
-For detailed setup instructions, including prerequisites, dependencies, environment variables, and external services or APIs, please refer to the `UpdateMe_Backend` and `UpdateMe_Frontend` folders. For any additional information, please refer to the images/documents in "UpdateMe Documentation".
+For detailed setup instructions, including prerequisites, dependencies, environment variables, and external services or APIs, please refer to the `UpdateMe_Backend` and `UpdateMe_Frontend` folders. For any additional information, please refer to the images/documents in `UpdateMe Documentation`.
 
 ## Current State of the Project
 
